@@ -1,10 +1,20 @@
+# Netlify Configuration for Next.js
+
 [build]
   command = "npm install --legacy-peer-deps && npm run build"
   publish = ".next"
 
-# Redirect all requests to Next.js handler (_next and API routes)
+[dev]
+  command = "npm run dev"
+  port = 3000
+  targetPort = 3000
+
+# Next.js plugin to handle SSR, API routes, etc.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Client-side routing fallback (if plugin is removed or you're serving static output only)
 [[redirects]]
   from = "/*"
-  to = "/.netlify/functions/next"
+  to = "/index.html"
   status = 200
-  force = true
