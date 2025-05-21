@@ -7,9 +7,9 @@ import { ThemeProvider } from "@/components/theme-provider"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "LifeDash - Modern Dashboard",
+  title: "PulseNest - Modern Dashboard",
   description: "A modern, responsive dashboard with weather, crypto, currency rates and more",
-    generator: 'v0.dev'
+  generator: 'v0.dev'
 }
 
 export default function RootLayout({
@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <ThemeProvider defaultTheme="system" storageKey="lifedash-theme">
+        <ThemeProvider defaultTheme="system" storageKey="PulseNest-theme">
           {children}
         </ThemeProvider>
       </body>
