@@ -300,7 +300,7 @@ export function WeatherPanel({ locationData }: WeatherPanelProps) {
 
             <TabsContent value="hourly" className="mt-0">
               <div className="rounded-lg bg-gradient-to-br from-blue-50/80 to-blue-100/80 dark:from-blue-900/20 dark:to-blue-800/20 p-4">
-                <div className="flex overflow-x-auto pb-2 space-x-4">
+                <div className="flex overflow-x-auto pb-2 space-x-4 scrollbar-hide">
                   {getHourlyForecast().map((hour, index) => (
                     <div
                       key={index}
@@ -317,31 +317,35 @@ export function WeatherPanel({ locationData }: WeatherPanelProps) {
             </TabsContent>
 
             <TabsContent value="forecast" className="mt-0">
-              <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2">
-                {weatherData.daily.time.map((day, index) => (
-                  <div
-                    key={day}
-                    className={`flex flex-col items-center p-3 rounded-lg ${
-                      selectedDay === index ? "bg-blue-100/90 dark:bg-blue-900/50" : "bg-white/90 dark:bg-gray-800/50"
-                    } transition-all duration-300 hover:bg-blue-50 dark:hover:bg-blue-900/30 shadow-sm cursor-pointer`}
-                    onClick={() => setSelectedDay(index)}
-                  >
-                    <span className="text-xs font-medium mb-1">{formatDate(day)}</span>
-                    {getWeatherIcon(weatherData.daily.weather_code[index])}
-                    <div className="flex items-center gap-1 mt-2">
-                      <span className="text-xs font-bold text-red-500">
-                        {Math.round(weatherData.daily.temperature_2m_max[index])}°
-                      </span>
-                      <span className="text-xs text-gray-400">|</span>
-                      <span className="text-xs font-medium text-blue-500">
-                        {Math.round(weatherData.daily.temperature_2m_min[index])}°
+              <div className="overflow-x-auto scrollbar-hide">
+                <div className="grid grid-cols-7 min-w-[700px] gap-2">
+                  {weatherData.daily.time.map((day, index) => (
+                    <div
+                      key={day}
+                      className={`flex flex-col items-center p-3 rounded-lg ${
+                        selectedDay === index
+                          ? "bg-blue-100/90 dark:bg-blue-900/50"
+                          : "bg-white/90 dark:bg-gray-800/50"
+                      } transition-all duration-300 hover:bg-blue-50 dark:hover:bg-blue-900/30 shadow-sm cursor-pointer`}
+                      onClick={() => setSelectedDay(index)}
+                    >
+                      <span className="text-xs font-medium mb-1">{formatDate(day)}</span>
+                      {getWeatherIcon(weatherData.daily.weather_code[index])}
+                      <div className="flex items-center gap-1 mt-2">
+                        <span className="text-xs font-bold text-red-500">
+                          {Math.round(weatherData.daily.temperature_2m_max[index])}°
+                        </span>
+                        <span className="text-xs text-gray-400">|</span>
+                        <span className="text-xs font-medium text-blue-500">
+                          {Math.round(weatherData.daily.temperature_2m_min[index])}°
+                        </span>
+                      </div>
+                      <span className="text-xs mt-1 text-center">
+                        {getWeatherDescription(weatherData.daily.weather_code[index])}
                       </span>
                     </div>
-                    <span className="text-xs mt-1 text-center">
-                      {getWeatherDescription(weatherData.daily.weather_code[index])}
-                    </span>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
 
               <div className="mt-4 p-3 bg-blue-50/80 dark:bg-blue-900/20 rounded-lg">
@@ -360,7 +364,9 @@ export function WeatherPanel({ locationData }: WeatherPanelProps) {
                     <Sunrise className="h-4 w-4 text-orange-500 mr-2" />
                     <div>
                       <span className="text-xs text-gray-500">Sunrise</span>
-                      <p className="text-sm font-medium">{formatTime(weatherData.daily.sunrise[selectedDay])}</p>
+                      <p className="text-sm font-medium">
+                        {formatTime(weatherData.daily.sunrise[selectedDay])}
+                      </p>
                     </div>
                   </div>
 
@@ -368,7 +374,9 @@ export function WeatherPanel({ locationData }: WeatherPanelProps) {
                     <Sunset className="h-4 w-4 text-red-500 mr-2" />
                     <div>
                       <span className="text-xs text-gray-500">Sunset</span>
-                      <p className="text-sm font-medium">{formatTime(weatherData.daily.sunset[selectedDay])}</p>
+                      <p className="text-sm font-medium">
+                        {formatTime(weatherData.daily.sunset[selectedDay])}
+                      </p>
                     </div>
                   </div>
 
