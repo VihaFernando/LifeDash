@@ -1,0 +1,10 @@
+[build]
+  command = "npm install --legacy-peer-deps && npm run build"
+  publish = ".next"
+
+# Redirect all requests to Next.js handler (_next and API routes)
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/next"
+  status = 200
+  force = true
