@@ -20,6 +20,7 @@ interface LocationData {
   timezone: string
   org: string
   postal?: string
+  isAccurate?: boolean
 }
 
 export default function Dashboard() {
@@ -29,11 +30,74 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchLocationData = async () => {
       try {
+        // First get IP-based location as a fallback
         const response = await fetch(`https://ipinfo.io/json?token=6599e8e6d1890f`)
-        const data = await response.json()
-        setLocationData(data)
+        const ipData = await response.json()
+
+        // Try to get more accurate location using browser's Geolocation API
+        if (navigator.geolocation) {
+          try {
+            // Use a promise to handle the geolocation request
+            const getAccuratePosition = () => {
+              return new Promise<GeolocationPosition>((resolve, reject) => {
+                navigator.geolocation.getCurrentPosition(resolve, reject, {
+                  enableHighAccuracy: true,
+                  timeout: 5000,
+                  maximumAge: 0,
+                })
+              })
+            }
+
+            // Wait for user to grant permission and get position
+            const position = await getAccuratePosition()
+            const { latitude, longitude } = position.coords
+
+            // Reverse geocode to get city, region, etc.
+            const geocodeResponse = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`,
+            )
+
+            if (geocodeResponse.ok) {
+              const geocodeData = await geocodeResponse.json()
+              const address = geocodeData.address
+
+              // Update the location data with accurate information
+              setLocationData({
+                ...ipData,
+                city: address.city || address.town || address.village || address.suburb || ipData.city,
+                region: address.state || ipData.region,
+                loc: `${latitude},${longitude}`,
+                isAccurate: true,
+              })
+            } else {
+              // If reverse geocoding fails, use IP data but with accurate coordinates
+              setLocationData({
+                ...ipData,
+                loc: `${latitude},${longitude}`,
+                isAccurate: true,
+              })
+            }
+          } catch (geoError) {
+            console.log("Geolocation permission denied or error:", geoError)
+            // Fall back to IP-based location
+            setLocationData(ipData)
+          }
+        } else {
+          // Browser doesn't support geolocation, use IP data
+          setLocationData(ipData)
+        }
       } catch (error) {
         console.error("Error fetching location data:", error)
+        // If all fails, try to set some default data
+        setLocationData({
+          ip: "Unknown",
+          city: "Unknown",
+          region: "Unknown",
+          country: "Unknown",
+          loc: "0,0",
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          org: "Unknown",
+        })
       } finally {
         setLoading(false)
       }
@@ -51,7 +115,7 @@ export default function Dashboard() {
       <header className="sticky top-0 z-10 backdrop-blur-md bg-white/70 dark:bg-gray-900/70 border-b border-gray-200 dark:border-gray-800">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-teal-400">
-            PulseNest
+            LifeDash
           </h1>
           <div className="flex items-center gap-4">
             <Clock />

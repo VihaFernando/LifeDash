@@ -1,6 +1,6 @@
 "use client"
 
-import { MapPin, Wifi, Clock } from "lucide-react"
+import { MapPin, Wifi, Clock, CheckCircle2, AlertCircle } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 
 interface LocationData {
@@ -12,6 +12,7 @@ interface LocationData {
   timezone: string
   org?: string
   postal?: string
+  isAccurate?: boolean
 }
 
 interface LocationInsightsProps {
@@ -86,8 +87,19 @@ export function LocationInsights({ locationData }: LocationInsightsProps) {
             <div className="flex-shrink-0 h-12 w-12 rounded-full bg-blue-100/80 dark:bg-blue-900/30 flex items-center justify-center">
               <MapPin className="h-6 w-6 text-blue-500" />
             </div>
-            <div>
-              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Location</p>
+            <div className="flex-1">
+              <div className="flex items-center gap-1">
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Location</p>
+                {locationData.isAccurate ? (
+                  <CheckCircle2 className="h-3.5 w-3.5 text-green-500">
+                    <title>Precise location</title>
+                  </CheckCircle2>
+                ) : (
+                  <AlertCircle className="h-3.5 w-3.5 text-amber-500">
+                    <title>Approximate location</title>
+                  </AlertCircle>
+                )}
+              </div>
               <p className="font-semibold text-gray-800 dark:text-gray-200">
                 {locationData.city}, {locationData.region}
               </p>
